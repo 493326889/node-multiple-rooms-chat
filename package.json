@@ -1,0 +1,10 @@
+{
+  "name": "node-multiple-rooms-chat",
+  "version": "1.0.0",
+  "main": "",
+  "license": "MIT",
+  "dependencies": {
+    "redis": "^2.6.3",
+    "socket.io": "^1.6.0"
+  }
+}
