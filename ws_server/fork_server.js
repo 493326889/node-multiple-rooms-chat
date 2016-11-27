@@ -26,22 +26,42 @@ io.on('connection', function(socket) {
 
 	console.log('worker pid: ' + process.pid  + ' join roomid: '+ roomid);
 
+	// console.log(roomSet);
 
-	socket.join(roomid);    //加入房间
+	socket.on('join', function (data) {
 
-	if(!roomSet[roomid]){
-		console.log('sub channel ' + roomid);
-    	sub.subscribe(roomid);
-	}
-	roomSet[roomid] || (roomSet[roomid] = []);
-   	roomSet[roomid].push(socket.id);
+		socket.join(roomid);    //加入房间
 
-	reportConnect();
+		if(!roomSet[roomid]){
+			roomSet[roomid] = {};
+			console.log('sub channel ' + roomid);
+	    	sub.subscribe(roomid);
+		}
+		// roomSet[roomid] || (roomSet[roomid] = {});
+	   	roomSet[roomid][socket.id] = {};
 
-	console.log(roomSet);
+		reportConnect();
 
-    // socket.emit('message',{ data: 'message' })
-    
+        console.log(data.username + ' join, IP: ' + socket.client.conn.remoteAddress);
+        roomSet[roomid][socket.id].username = data.username;
+        // io.to(roomid).emit('broadcast_join', data);
+        pub.publish(roomid, JSON.stringify({"event":'join',"data": data}));
+
+    });
+
+    socket.on('say', function (data) {
+        console.log("Received Message: " + data.text);
+        pub.publish(roomid, JSON.stringify({"event":'broadcast_say',"data": {
+            username: roomSet[roomid][socket.id].username,
+            text: data.text
+        }}));
+        // io.to(roomid).emit('broadcast_say', {
+        //     username: roomSet[roomid][socket.id].username,
+        //     text: data.text
+        // });
+    });
+
+
 	socket.on('disconnect', function() {
 		num--;
 		console.log('worker pid: ' + process.pid + ' clien disconnection num:' + num);
@@ -49,16 +69,17 @@ io.on('connection', function(socket) {
 			cmd: 'client disconnect'
 		});
 
-		// 从房间名单中移除
-	    var index = roomSet[roomid].indexOf(socket.id);
-	    if (index !== -1) {
-	      roomSet[roomid].splice(index, 1);
-	    }
+		if (roomSet[roomid] && roomSet[roomid][socket.id] && roomSet[roomid][socket.id].username) {
+            console.log(roomSet[roomid][socket.id].username + ' quit');
+            pub.publish(roomid, JSON.stringify({"event":'broadcast_quit',"data": {
+                username: roomSet[roomid][socket.id].username
+            }}));
+            // io.to(roomid).emit('broadcast_quit', {
+            //     username: roomSet[roomid][socket.id].username
+            // });
+        }
+        roomSet[roomid] && roomSet[roomid][socket.id] && (delete roomSet[roomid][socket.id]);
 
-	    socket.leave(roomid);    // 退出房间
-	    io.to(roomid).emit('message', {data: socket.id + '退出了房间' + roomid});
-    	console.log(socket.id  + '退出了' + roomid);
-    	console.log(roomSet);
 	});
 });
 
@@ -80,8 +101,8 @@ sub.on("subscribe", function (channel, count) {
  */
 sub.on("message", function (channel, message) {
     console.log("message channel " + channel + ": " + message);
-    io.to(channel).emit('message',{ data: message });
-    //io.sockets.emit('message', { data: message })
+
+    io.to(channel).emit('message', JSON.parse(message));
 });
 
 /**
