@@ -1,173 +1,293 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
-    <title>node多房间聊天室</title>
-    <style>
-        *{-webkit-box-sizing:border-box;box-sizing:border-box}
-        .tc{text-align:center}
-        body,dd,dl,input,li,ul{margin:0;padding:0}
-        hr{margin:20px 0;height:0;border:0;border-top:1px solid #ccc}
-        body{background-color:#f2f2f2;font:12px/1.444 "microsoft yahei"}
-        ul{padding:0 10px;list-style:none}
-        #option{position:fixed;bottom:0;left:0;display:-webkit-flex;display:flex;display:-webkit-box;padding:10px;width:100%;background-color:#f2f2f2;-webkit-flex-direction:row;flex-direction:row;-webkit-box-orient:horizontal}
-        #option input{outline:0;border:1px solid #ccc}
-        input#keywords{display:block;padding:0 0 0 10px;height:40px;border-right:0;-webkit-flex:1;flex:1;-webkit-box-flex:1}
-        input#keywords:focus{font-size:20px}
-        input#send{width:80px;height:40px;border-left:0;background:#8CC63E;color:#fff;cursor:pointer;-webkit-transition:.3s;transition:.3s}
-        input#send:hover{background:#2FBF08}
-        input#send:active{background:#009100}
-        #list dd{overflow:hidden;padding:5px 0}
-        #list dd li{overflow:hidden}
-        #list dd .nick-name{padding:5px;color:#999}
-        #list dd .head-icon{float:left;margin:0 5px;width:30px;height:30px;border-radius:5px;background:url(static/icons/user_a.png) no-repeat center center;background-size:cover}
-        #list dd .text{position:relative;float:left;padding:6px 10px;max-width:60%;min-height:30px;border:1px solid #ccc;border-radius:3px;background-color:#fff;color:#333;word-wrap:break-word}
-        #list dd .text:before{position:absolute;top:10px;width:0;height:0;content:''}
-        #list dd.me .text:before{right:-4px;border-top:5px solid transparent;border-bottom:5px solid transparent;border-left:5px solid #8CC63E}
-        #list dd.other .text:before{left:-4px;width:5px;height:5px;border-bottom:1px solid #ccc;border-left:1px solid #ccc;background-color:#fff;-webkit-transform:rotate(45deg);transform:rotate(45deg)}
-        #list dd.me .nick-name{display:none;text-align:right}
-        #list dd.me .head-icon{float:right;background-image:url(static/icons/user_b.png)}
-        #list dd.me .text{float:right;border:0;background-color:#8CC63E}
-        .placeholder.footer{height:50px}
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
+  <title>node多房间聊天室</title>
+  <style>
+  * {
+    -webkit-box-sizing: border-box;
+    box-sizing: border-box
+  }
+  
+  .tc {
+    text-align: center
+  }
+  
+  body,
+  dd,
+  dl,
+  input,
+  li,
+  ul {
+    margin: 0;
+    padding: 0
+  }
+  
+  hr {
+    margin: 20px 0;
+    height: 0;
+    border: 0;
+    border-top: 1px solid #ccc
+  }
+  
+  body {
+    background-color: #f2f2f2;
+    font: 12px/1.444 "microsoft yahei"
+  }
+  
+  ul {
+    padding: 0 10px;
+    list-style: none
+  }
+  
+  #option {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    display: -webkit-flex;
+    display: flex;
+    display: -webkit-box;
+    padding: 10px;
+    width: 100%;
+    background-color: #f2f2f2;
+    -webkit-flex-direction: row;
+    flex-direction: row;
+    -webkit-box-orient: horizontal
+  }
+  
+  #option input {
+    outline: 0;
+    border: 1px solid #ccc
+  }
+  
+  input#keywords {
+    display: block;
+    padding: 0 0 0 10px;
+    height: 40px;
+    border-right: 0;
+    -webkit-flex: 1;
+    flex: 1;
+    -webkit-box-flex: 1
+  }
+  
+  input#keywords:focus {
+    font-size: 20px
+  }
+  
+  input#send {
+    width: 80px;
+    height: 40px;
+    border-left: 0;
+    background: #8CC63E;
+    color: #fff;
+    cursor: pointer;
+    -webkit-transition: .3s;
+    transition: .3s
+  }
+  
+  input#send:hover {
+    background: #2FBF08
+  }
+  
+  input#send:active {
+    background: #009100
+  }
+  
+  #list dd {
+    overflow: hidden;
+    padding: 5px 0
+  }
+  
+  #list dd li {
+    overflow: hidden
+  }
+  
+  #list dd .nick-name {
+    padding: 5px;
+    color: #999
+  }
+  
+  #list dd .head-icon {
+    float: left;
+    margin: 0 5px;
+    width: 30px;
+    height: 30px;
+    border-radius: 5px;
+    background: url(static/icons/user_a.png) no-repeat center center;
+    background-size: cover
+  }
+  
+  #list dd .text {
+    position: relative;
+    float: left;
+    padding: 6px 10px;
+    max-width: 60%;
+    min-height: 30px;
+    border: 1px solid #ccc;
+    border-radius: 3px;
+    background-color: #fff;
+    color: #333;
+    word-wrap: break-word
+  }
+  
+  #list dd .text:before {
+    position: absolute;
+    top: 10px;
+    width: 0;
+    height: 0;
+    content: ''
+  }
+  
+  #list dd.me .text:before {
+    right: -4px;
+    border-top: 5px solid transparent;
+    border-bottom: 5px solid transparent;
+    border-left: 5px solid #8CC63E
+  }
+  
+  #list dd.other .text:before {
+    left: -4px;
+    width: 5px;
+    height: 5px;
+    border-bottom: 1px solid #ccc;
+    border-left: 1px solid #ccc;
+    background-color: #fff;
+    -webkit-transform: rotate(45deg);
+    transform: rotate(45deg)
+  }
+  
+  #list dd.me .nick-name {
+    display: none;
+    text-align: right
+  }
+  
+  #list dd.me .head-icon {
+    float: right;
+    background-image: url(static/icons/user_b.png)
+  }
+  
+  #list dd.me .text {
+    float: right;
+    border: 0;
+    background-color: #8CC63E
+  }
+  
+  .placeholder.footer {
+    height: 50px
+  }
+  </style>
 </head>
+
 <body>
-<h1 class="tc">Welcome!</h1>
-<hr/>
-<dl id="list"></dl>
-<div id="option"><input type="text" id="keywords" autofocus/><input type="button" name="" id="send" value="发送"/></div>
-<div class="placeholder footer"></div>
-<script src="static/socket.io.js"></script>
-<script>
-    var roomid = (function () {
-        return prompt('请输入房间号','')
-    })();
+  <h1 class="tc">Welcome!</h1>
+  <hr/>
+  <dl id="list"></dl>
+  <div id="option">
+    <input type="text" id="keywords" autofocus/>
+    <input type="button" name="" id="send" value="发送" />
+  </div>
+  <div class="placeholder footer"></div>
+  <script src="static/socket.io.js"></script>
+  <script>
+  var roomid = (function() {
+    return prompt('请输入房间号', '')
+  })();
 
-    var userInfo = {
-        username: (function () {
-            return prompt('请输入rtx昵称', '');
-        })()
+  var userInfo = {
+    username: (function() {
+      return prompt('请输入rtx昵称', '');
+    })()
+  };
+
+  if (roomid != null && roomid != "") {
+    var socket = io.connect('http://127.0.0.1?roomid=' + roomid);
+    /*连接完毕，马上发送一个'join'事件，把自己的用户名告诉别人*/
+    socket.emit('join', {
+      username: userInfo.username
+    });
+
+    socket.on('message', function(msg) {
+      switch (msg.event) {
+        case 'join':
+          if (msg.data.username) {
+            console.log(msg.data.username + '加入了聊天室');
+            var data = {
+              text: msg.data.username + '加入了聊天室'
+            };
+            showNotice(data);
+          }
+          break;
+        case 'broadcast_say':
+          if (msg.data.username !== userInfo.username) {
+            console.log(msg.data.username + '说: ' + msg.data.text);
+            showMessage(msg.data);
+          }
+          break;
+        case 'broadcast_quit':
+          if (msg.data.username) {
+            console.log(msg.data.username + '离开了聊天室');
+            var data = {
+              text: msg.data.username + '离开了聊天室'
+            };
+            showNotice(data);
+          }
+          break;
+      }
+    })
+
+  }
+
+
+  /*点击发送按钮*/
+  document.getElementById('send').onclick = function() {
+    var keywords = document.getElementById('keywords');
+    if (keywords.value === '') {
+      keywords.focus();
+      return false;
+    }
+    var data = {
+      text: keywords.value,
+      type: 0,
+      username: userInfo.username
     };
+    /*向服务器提交一个say事件，发送消息*/
+    socket.emit('say', data);
 
-    if(roomid !=null && roomid != "") {
-        var socket = io.connect('http://127.0.0.1:6001?roomid='+ roomid);
-        /*连接完毕，马上发送一个'join'事件，把自己的用户名告诉别人*/
-        socket.emit('join', {
-            username: userInfo.username
-        });
+    showMessage(data);
+    keywords.value = "";
+    keywords.focus();
+  };
+  /*展示消息*/
+  function showMessage(data) {
+    var itemArr = [];
+    itemArr.push('<dd class="' + (data.type === 0 ? "me" : "other") + '">');
+    itemArr.push('<ul>');
+    itemArr.push('<li class="nick-name">' + data.username + '</li>');
+    itemArr.push('<li class="detail">');
+    itemArr.push('<div class="head-icon"></div>');
+    itemArr.push('<div class="text">' + data.text + '</div>');
+    itemArr.push('</li>');
+    itemArr.push('</ul>');
+    itemArr.push('</dd>');
 
-        /*收到加入聊天室广播后，显示消息*/
-        // socket.on('broadcast_join', function (data) {
-        //     if (data.username) {
-        //         console.log(data.username + '加入了聊天室');
-        //         var data = {
-        //             text: data.username + '加入了聊天室'
-        //         };
-        //         showNotice(data);
-        //     }
-        // });
+    document.getElementById('list').innerHTML += itemArr.join('');
+  }
+  /*展示通知*/
+  function showNotice(data) {
+    var item = '<dd class="tc"><span>' + data.text + '</span><dd>';
+    document.getElementById('list').innerHTML += item;
+  }
 
-        /*收到俩开聊天室广播后，显示消息*/
-        socket.on('broadcast_quit', function (data) {
-            if (data.username) {
-                console.log(data.username + '离开了聊天室');
-                var data = {
-                    text: data.username + '离开了聊天室'
-                };
-                showNotice(data);
-            }
-        });
-
-        /*收到别人发的消息广播后，显示消息*/
-        socket.on('broadcast_say', function (data) {
-            if(data.username!==userInfo.username) {
-                console.log(data.username + '说: ' + data.text);
-                showMessage(data);
-            }
-        });
-
-        socket.on('message', function(msg){ 
-            switch (msg.event) {
-                case 'join':
-                if (msg.data.username) {
-                    console.log(msg.data.username + '加入了聊天室');
-                    var data = {
-                        text: msg.data.username + '加入了聊天室'
-                    };
-                    showNotice(data);
-                }
-                break;
-                case 'broadcast_say':
-                    if(msg.data.username!==userInfo.username) {
-                        console.log(msg.data.username + '说: ' + msg.data.text);
-                        showMessage(msg.data);
-                    }
-                break;
-                case 'broadcast_quit':
-                    if (msg.data.username) {
-                        console.log(msg.data.username + '离开了聊天室');
-                        var data = {
-                            text: msg.data.username + '离开了聊天室'
-                        };
-                        showNotice(data);
-                    }
-                    break;
-            }
-        })
-
+  /*回车事件*/
+  document.onkeyup = function(e) {
+    if (!e) e = window.event;
+    if ((e.keyCode || e.which) == 13) {
+      document.getElementById('send').click();
     }
-
-
-
-    /*点击发送按钮*/
-    document.getElementById('send').onclick = function () {
-        var keywords = document.getElementById('keywords');
-        if (keywords.value === '') {
-            keywords.focus();
-            return false;
-        }
-        var data = {
-            text: keywords.value,
-            type: 0,
-            username: userInfo.username
-        };
-        /*向服务器提交一个say事件，发送消息*/
-        socket.emit('say', data);
-
-        showMessage(data);
-        keywords.value = "";
-        keywords.focus();
-    };
-    /*展示消息*/
-    function showMessage(data) {
-        var itemArr = [];
-        itemArr.push('<dd class="'+(data.type === 0 ? "me" : "other")+'">');
-        itemArr.push('<ul>');
-        itemArr.push('<li class="nick-name">' + data.username + '</li>');
-        itemArr.push('<li class="detail">');
-        itemArr.push('<div class="head-icon"></div>');
-        itemArr.push('<div class="text">' + data.text + '</div>');
-        itemArr.push('</li>');
-        itemArr.push('</ul>');
-        itemArr.push('</dd>');
-
-        document.getElementById('list').innerHTML += itemArr.join('');
-    }
-    /*展示通知*/
-    function showNotice(data) {
-        var item = '<dd class="tc"><span>' + data.text + '</span><dd>';
-        document.getElementById('list').innerHTML += item;
-    }
-
-    /*回车事件*/
-    document.onkeyup = function (e) {
-        if (!e) e = window.event;
-        if ((e.keyCode || e.which) == 13) {
-            document.getElementById('send').click();
-        }
-    }
-
-</script>
+  }
+  </script>
 </body>
+
 </html>
