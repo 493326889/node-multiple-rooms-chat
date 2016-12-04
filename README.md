@@ -37,7 +37,7 @@ https://redis.io/download 下载后，安装并启动本地redis服务，默认�
 
 ````
 node cluster 
-````      
+````  
 
 以上命令启动master进程并监听6001-600n端口，根据cpu核数而定。     
 
