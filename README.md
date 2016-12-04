@@ -34,6 +34,7 @@ server {
 https://redis.io/download 下载后，安装并启动本地redis服务，默认监听6379端口。    
 
 ####启动服务:
+
 ````
 node cluster 
 ````      
