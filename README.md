@@ -1,9 +1,9 @@
 # node-multiple-rooms-chat
 node socket.io multiple room chat demo
 
-####node、socket.io、redis搭建的基于多机多进程的消息即时IM系统。
+#### node、socket.io、redis搭建的基于多机多进程的消息即时IM系统。
 
-####nginx配置：    
+#### nginx配置：    
 在http下新增upstream配置ip_hash，如果多机，则添加多个替换下面ip地址即可。然后配置server里的location规则。nginx须>1.3才可支持websocket。
 ````
 upstream io_nodes {
@@ -30,10 +30,10 @@ server {
   }
 }
 ````   
-####安装redis
+#### 安装redis
 https://redis.io/download 下载后，安装并启动本地redis服务，默认监听6379端口。    
 
-####启动服务:
+#### 启动服务:
 
 ````
 node cluster 
@@ -42,5 +42,5 @@ node cluster
 以上命令启动master进程并监听6001-600n端口，根据cpu核数而定。     
 
 
-####访问index.html    
+#### 访问index.html    
 输入参数，并建立websocket连接。
